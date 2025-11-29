@@ -139,11 +139,43 @@ CREATE TABLE IF NOT EXISTS sites (
 INSERT INTO sites (site_name, site_url) VALUES ('Google', 'https://www.google.com');
 INSERT INTO sites (site_name, site_url) VALUES ('Wikipedia', 'https://www.wikipedia.org');
 INSERT INTO sites (site_name, site_url) VALUES ('ELDENRING', 'https://www.eldenring.jp/index.html');
+https://nightreign.eldenring.jp/index.html
 
 
 
 
+CREATE TABLE IF NOT EXISTS Materials (
+id INT PRIMARY KEY, 
+name VARCHAR(255),
+possessions INT,
+power INT
+);
 
+-- Recipes テーブル: 何が作れるかのレシピ定義
+CREATE TABLE IF NOT EXISTS Recipes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,          
+    result_item_id INT NOT NULL,         
+    FOREIGN KEY (result_item_id) REFERENCES Materials(id)
+);
+-- Recipe_Ingredients テーブル: レシピに必要な材料
+CREATE TABLE IF NOT EXISTS Recipe_Ingredients (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    recipe_id INT NOT NULL,              
+    material_id INT NOT NULL,            
+    amount INT NOT NULL,                 
+    FOREIGN KEY (recipe_id) REFERENCES Recipes(id),
+    FOREIGN KEY (material_id) REFERENCES Materials(id)
+);
+-- ガチャの排出アイテムと確率の重みを管理するテーブル
+CREATE TABLE IF NOT EXISTS Gacha_Items (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    material_id INT NOT NULL,            -- 排出されるアイテムのID
+    weight INT NOT NULL,                 -- 排出の重み（大きいほど出やすい）
+    FOREIGN KEY (material_id) REFERENCES Materials(id)
+);
+
+さっきのコード実装したけどガチャは実装できたけど所持アイテムの欄が消えたし素材の数も取得してないっぽい
  
 select * from users where id = 5;
 
