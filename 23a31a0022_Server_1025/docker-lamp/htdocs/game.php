@@ -24,13 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ガチャリクエストの処理
     if (isset($_POST['action']) && $_POST['action'] === 'run_gacha') {
-        $gacha_results = run_gacha($pdo, 10); // 10連ガチャを実行
-        if (!empty($gacha_results)) {
-            if (apply_gacha_results($pdo, $gacha_results)) {
-                $_SESSION['gacha_results'] = $gacha_results; // 結果をセッションに保存
-                $_SESSION['message'] = '10連ガチャを実行しました！';
-            } else {
-                $_SESSION['message'] = 'ガチャ結果の反映に失敗しました。';
+        $pulls = filter_input(INPUT_POST, 'pulls', FILTER_VALIDATE_INT);
+        if ($pulls > 0) {
+            $gacha_results = run_gacha($pdo, $pulls); // 指定された回数ガチャを実行
+            if (!empty($gacha_results)) {
+                if (apply_gacha_results($pdo, $gacha_results)) {
+                    $_SESSION['gacha_results'] = $gacha_results; // 結果をセッションに保存
+                    $_SESSION['message'] = "{$pulls}連ガチャを実行しました！";
+                } else {
+                    $_SESSION['message'] = 'ガチャ結果の反映に失敗しました。';
+                }
             }
         } else {
             $_SESSION['message'] = 'ガチャの実行に失敗しました。';
@@ -179,11 +182,17 @@ unset($_SESSION['gacha_results']);
         <div class="gacha-area">
             <h2>素材ガチャ</h2>
             <div class="recipe"> <!-- 見た目を合わせるために .recipe クラスを使用 -->
-                <h3>10連素材ガチャ</h3>
-                <p>素材を10個まとめて入手します。</p>
-                <form action="game.php" method="POST"> <!-- ★ 3. フォームの送信先を新しいファイル名に変更 -->
+                <h3>素材ガチャ</h3>
+                <p>素材をまとめて入手します。</p>
+                <form action="game.php" method="POST" style="margin-bottom: 1em;">
                     <input type="hidden" name="action" value="run_gacha">
+                    <input type="hidden" name="pulls" value="10">
                     <button type="submit">10連を引く</button>
+                </form>
+                <form action="game.php" method="POST">
+                    <input type="hidden" name="action" value="run_gacha">
+                    <input type="hidden" name="pulls" value="100">
+                    <button type="submit">100連を引く</button>
                 </form>
             </div>
         </div>
