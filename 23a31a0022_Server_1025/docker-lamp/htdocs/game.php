@@ -122,8 +122,8 @@ unset($_SESSION['gacha_results']);
         /* レア度ごとの色定義 */
         .rarity-0, .rarity-1 { color: #333; } /* 通常 */
         .rarity-2 { color: #008000; font-weight: bold; } /* 緑 (レア) */
-        .rarity-3 { color: #0000FF; font-weight: bold; } /* 青 (スーパーレア) */
-        .rarity-4 { color: #800080; font-weight: bold; } /* 紫 (ウルトラレア) */
+        .rarity-3 { color: #0000ffff; font-weight: bold; } /* 青 (スーパーレア) */
+        .rarity-4 { color: #ff0606ff; font-weight: bold; } /* 赤 (ウルトラレア) */
         .rarity-5 { color: #FFD700; font-weight: bold; text-shadow: 1px 1px 0 #000; } /* 金 (レジェンド) */
     </style>
 </head>
