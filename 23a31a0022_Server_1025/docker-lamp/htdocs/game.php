@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // --- データの取得 ---
 
 // 1. 現在の所持アイテム一覧を取得
-$stmt_materials = $pdo->query("SELECT id, name, possessions FROM Materials ORDER BY id");
+$stmt_materials = $pdo->query("SELECT id, name, possessions, rarity FROM Materials ORDER BY id");
 $my_items = $stmt_materials->fetchAll(PDO::FETCH_ASSOC); // ★先に全件取得します
 
 // ガチャ結果の名前表示などで使えるように、IDをキーにした連想配列も作成します
@@ -93,7 +93,10 @@ $gacha_results_ids = $_SESSION['gacha_results'] ?? null;
 $gacha_results_display = [];
 if ($gacha_results_ids) {
     foreach ($gacha_results_ids as $id) {
-        $gacha_results_display[] = $my_items_map[$id]['name'] ?? '不明なアイテム';
+        $gacha_results_display[] = [
+            'name' => $my_items_map[$id]['name'] ?? '不明なアイテム',
+            'rarity' => $my_items_map[$id]['rarity'] ?? 0
+        ];
     }
 }
 unset($_SESSION['gacha_results']);
@@ -116,6 +119,12 @@ unset($_SESSION['gacha_results']);
         .recipe button { font-size: 1em; padding: 0.5em 1em; }
         .container { display: flex; gap: 2em; }
         .gacha-result { background-color: #f0f8ff; padding: 1em; border: 1px solid #b3d7ff; margin-top: 1em; }
+        /* レア度ごとの色定義 */
+        .rarity-0, .rarity-1 { color: #333; } /* 通常 */
+        .rarity-2 { color: #008000; font-weight: bold; } /* 緑 (レア) */
+        .rarity-3 { color: #0000FF; font-weight: bold; } /* 青 (スーパーレア) */
+        .rarity-4 { color: #800080; font-weight: bold; } /* 紫 (ウルトラレア) */
+        .rarity-5 { color: #FFD700; font-weight: bold; text-shadow: 1px 1px 0 #000; } /* 金 (レジェンド) */
     </style>
 </head>
 <body>
@@ -131,7 +140,11 @@ unset($_SESSION['gacha_results']);
     <?php if (!empty($gacha_results_display)): ?>
         <div class="gacha-result">
             <strong>ガチャ結果:</strong>
-            <?= htmlspecialchars(implode(', ', $gacha_results_display), ENT_QUOTES, 'UTF-8') ?>
+            <?php foreach ($gacha_results_display as $i => $item): ?>
+                <span class="rarity-<?= htmlspecialchars($item['rarity'], ENT_QUOTES, 'UTF-8') ?>">
+                    <?= htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8') ?>
+                </span><?= ($i < count($gacha_results_display) - 1) ? ', ' : '' ?>
+            <?php endforeach; ?>
         </div>
     <?php endif; ?>
 
