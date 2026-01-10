@@ -1,3 +1,6 @@
+/*initialize.sqlの代わりにメモにコードを追加してphpMyAdminでデータベースのテーブルに追加*/
+
+
 
 DROP DATABASE IF EXISTS test_db;
 CREATE DATABASE IF NOT EXISTS test_db;
