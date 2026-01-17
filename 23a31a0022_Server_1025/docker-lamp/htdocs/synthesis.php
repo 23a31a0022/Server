@@ -5,7 +5,7 @@
  */
 function connect_db(): ?PDO
 {
-    require_once 'db_config.php';
+    require 'db_config.php';
     $dsn =  "mysql:host={$host};dbname={$database};charset=utf8mb4" ;
     $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -14,9 +14,12 @@ function connect_db(): ?PDO
     ];
 
     try {
-       return new PDO($dsn, $username, $password, $options);
+
+        $pdo = new PDO($dsn, $username, $password, $options);
+        return $pdo;
     } catch (\PDOException $e) {
         // 実際のアプリケーションでは、より詳細なエラーハンドリングを行います
+        echo "DB Error: " . $e->getMessage();
         error_log($e->getMessage());
         return null;
     }

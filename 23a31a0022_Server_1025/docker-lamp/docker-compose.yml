@@ -3,6 +3,7 @@ version: "3.9"
 services:
   mysql:
     image: mysql:8.0.28
+    command: --default-authentication-plugin=mysql_native_password
     volumes:
       - db_data:/var/lib/mysql
       - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf  #my.cnfを読み込む
@@ -31,7 +32,7 @@ services:
       - ./htdocs:/var/www/html
     restart: always
     ports:
-      - "80:80"
+      - "8081:80"
     depends_on:
       - mysql
 volumes:

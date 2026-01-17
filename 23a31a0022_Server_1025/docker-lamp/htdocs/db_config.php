@@ -6,7 +6,7 @@ $username = 'root';
 
 $password = 'root';
 
-$database = 'test_db';
+$database = 'demo';
 
 
 
