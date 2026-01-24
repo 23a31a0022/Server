@@ -105,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 [3, 'ハイポーション調合', 7],
                 [4, 'すごい薬草生成', 6],
                 [5, '伝説の剣生成', 8],
+                
             ] as $r) $stmt->execute($r);
 
             $stmt = $pdo->prepare("INSERT INTO Recipe_Ingredients (recipe_id, material_id, amount) VALUES (?, ?, ?)");
@@ -114,6 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 [3, 4, 1], [3, 6, 1],
                 [4, 4 ,1], [4 ,1 ,10],
                 [5, 7, 100], [5 , 5, 100],
+                
+                
                 
 
             ] as $i) $stmt->execute($i);
