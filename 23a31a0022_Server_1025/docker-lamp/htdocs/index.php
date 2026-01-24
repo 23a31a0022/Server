@@ -19,6 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($targetRecipeId) {
             $result = synthesize_by_recipe($pdo, $targetRecipeId);
             $_SESSION['message'] = $result['message'];
+            // 伝説の剣 (Recipe ID 5) の合成成功時に演出フラグを立てる
+            if ($targetRecipeId == 5 && strpos($result['message'], '成功') !== false) {
+                $_SESSION['show_legendary_effect'] = true;
+            }
         }
     }
 
@@ -99,6 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 [1, 'ポーション生成', 4],
                 [2, '鉄の剣作成', 5],
                 [3, 'ハイポーション調合', 7],
+                [4, 'すごい薬草生成', 6],
+                [5, '伝説の剣生成', 8],
             ] as $r) $stmt->execute($r);
 
             $stmt = $pdo->prepare("INSERT INTO Recipe_Ingredients (recipe_id, material_id, amount) VALUES (?, ?, ?)");
@@ -106,11 +112,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 [1, 1, 2], [1, 2, 1],
                 [2, 3, 3], [2, 2, 2],
                 [3, 4, 1], [3, 6, 1],
+                [4, 4 ,1], [4 ,1 ,10],
+                [5, 7, 100], [5 , 5, 100],
+                
+
             ] as $i) $stmt->execute($i);
 
             $stmt = $pdo->prepare("INSERT INTO Gacha_Items (material_id, weight) VALUES (?, ?)");
             foreach ([
-                [1, 50], [2, 30], [3, 30], [6, 5], [8, 1],
+                [1, 50], [2, 20], [3, 10], [4, 5], [5, 5],
             ] as $g) $stmt->execute($g);
 
             $_SESSION['message'] = "データベースを初期化しました！";
@@ -178,6 +188,10 @@ foreach ($recipe_data as $row) {
 $message = $_SESSION['message'] ?? null;
 unset($_SESSION['message']);
 
+// 伝説の剣演出フラグの取得
+$show_legendary_effect = $_SESSION['show_legendary_effect'] ?? false;
+unset($_SESSION['show_legendary_effect']);
+
 // ガチャの結果があれば取得し、表示後に削除します
 $gacha_results_ids = $_SESSION['gacha_results'] ?? null;
 $gacha_results_display = [];
@@ -215,9 +229,38 @@ unset($_SESSION['gacha_results']);
         .rarity-3 { color: #0000ffff; font-weight: bold; } /* 青 (スーパーレア) */
         .rarity-4 { color: #ff0606ff; font-weight: bold; } /* 赤 (ウルトラレア) */
         .rarity-5 { color: #FFD700; font-weight: bold; text-shadow: 1px 1px 0 #000; } /* 金 (レジェンド) */
+
+        /* 伝説の剣演出用スタイル */
+        .legendary-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000;
+            animation: fadeIn 0.5s ease-out;
+            cursor: pointer;
+        }
+        .legendary-text {
+            font-size: 5em; color: #FFD700; font-weight: bold;
+            text-shadow: 0 0 20px #FFD700, 0 0 50px #FF8C00;
+            animation: scaleUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .legendary-sub {
+            font-size: 2em; color: #fff; margin-top: 20px;
+            animation: slideUp 1s ease-out 0.5s backwards;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleUp { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
+
+    <?php if ($show_legendary_effect): ?>
+        <div class="legendary-overlay" onclick="this.remove()">
+            <div class="legendary-text">伝説の剣 GET!!</div>
+            <div class="legendary-sub">世界を救う力が今ここに...</div>
+        </div>
+    <?php endif; ?>
 
     <h1>アイテム合成</h1>
 
