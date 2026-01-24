@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // 1. 現在の所持アイテム一覧を取得
 $stmt_materials = $pdo->query("SELECT id, name, possessions, rarity FROM Materials ORDER BY id");
-$my_items = $stmt_materials->fetchAll(PDO::FETCH_ASSOC); // ★先に全件取得します
+$my_items = $stmt_materials->fetchAll(PDO::FETCH_ASSOC); 
 
 // ガチャ結果の名前表示などで使えるように、IDをキーにした連想配列も作成します
 $my_items_map = [];

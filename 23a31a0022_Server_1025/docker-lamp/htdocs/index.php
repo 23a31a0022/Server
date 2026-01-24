@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // --- データベース初期化処理 (demodata.phpの代わり) ---
+    // --- データベース初期化処理  ---
     if (isset($_POST['action']) && $_POST['action'] === 'init_db') {
         try {
             // 既存テーブルの削除
